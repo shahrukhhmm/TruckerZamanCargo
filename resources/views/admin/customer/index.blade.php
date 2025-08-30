@@ -25,6 +25,7 @@
         </div>
 
 
+
         <div class="row mt-4">
             <div class="col">
                 <div class="card" style="overflow:auto; width:100% !important;">
@@ -296,8 +297,14 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                $('#sending-message').text(response.success);
+                // $('#sending-message').text(response.success);
                 // Reload the DataTable or update the UI as necessary
+
+                 Swal.fire(
+                    'Added!',
+                    'The customer has been Added.',
+                    'success'
+                );
                 $('.customer-listing').DataTable().ajax.reload();
             },
             error: function(xhr) {
@@ -377,7 +384,13 @@
                     'location': location,
 
                 },
-                success: function(response) {},
+                success: function(response) {
+                    Swal.fire(
+                        'Update!',
+                        'The client has been Updated.',
+                        'success'
+                    );
+                },
 
                 error: function(xhr) {
 
@@ -391,6 +404,52 @@
                 }
             });
 
+        });
+    });
+</script>
+
+
+
+{{-- delete pop up  --}}
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.delete', function() {
+            var customerId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ url('/customer-delete') }}/" + customerId,
+                        type: "GET",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The customer has been deleted.',
+                                'success'
+                            );
+                            $('.customer-listing').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the customer.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

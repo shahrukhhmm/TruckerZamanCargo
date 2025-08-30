@@ -24,6 +24,17 @@ class SaleController extends Controller
         return view('admin.deal.index',compact('user','customers'));
     }
 
+
+    public function getCustomer($id)
+    {
+        $customer = Customer::find($id);
+        if (!$customer) {
+            return response()->json(['error' => 'Customer not found'], 404);
+        }
+
+        return response()->json($customer);
+    }
+
     public function store(Request $request)
     {
         $deal = new Deal();
@@ -50,7 +61,15 @@ class SaleController extends Controller
             $total_weight = $weight * $ctn;
             $total_cbm = $cbm * $ctn;
 
-            $amount = $dealData['rate_type'] == 'CBM' ? $rate * $total_cbm : $rate * $total_weight;
+            // $amount = $dealData['rate_type'] == 'CBM' ? $rate * $total_cbm : $rate * $total_weight;
+            $amount = 0;
+            if ($dealData['rate_type'] == 'CBM') {
+                $amount = $rate * $total_cbm;
+            } else if($dealData['rate_type'] == 'PC') {
+                $amount = $rate * $total_quantity;
+            } else {
+                $amount = $rate * $total_weight;
+            }
 
             $dealsData[] = [
                 'item_name'      => $dealData['item_name'],
@@ -66,8 +85,11 @@ class SaleController extends Controller
                 'amount'         => $amount,
             ];
 
+
             $totalAmount += $amount;
         }
+
+        // dd($dealsData);
 
         $deal->deals_json = json_encode($dealsData);
 
@@ -86,22 +108,16 @@ class SaleController extends Controller
     {
         $deal = Deal::with('customer')->findOrFail($id);
 
+        // Check if deals_json is a string or array
+        $dealsData = is_string($deal->deals_json) ? json_decode($deal->deals_json, true) : $deal->deals_json;
 
-        $dealsData = json_decode($deal->deals_json, true);
-
+        // Initialize totalCtn
         $totalCtn = 0;
-        foreach($dealsData as $key) {
+        foreach ($dealsData as $key) {
             $totalCtn += $key['ctn'];
         }
 
-
-        return view('admin.deal.dealInvoice', compact('deal','dealsData' ,'totalCtn'));
-
-        // $pdf = Pdf::setOption(['isHtmlParserEnabled' => true,'isRemoteEnabled'=>true,'defaultFont' => 'sans-serif'])->loadView('admin.subAdmin.show', compact('sale'))->setPaper('A4', 'landscape');
-
-        // return $pdf->stream("pdfcard.pdf");
-
-        // return view('admin.subAdmin.show', compact('sale'));
+        return view('admin.deal.dealInvoice', compact('deal', 'dealsData', 'totalCtn'));
     }
 
 
@@ -129,7 +145,11 @@ class SaleController extends Controller
                     $btn =   '<a class="btn btn-sm  btn-info btn-info ml-2 my-3" href="'.url('/edit-deal/'.$row->id).'" role="button"><i class="fa fa-edit"></i></a>';
                     $btn = $btn .  '<a class="btn btn-sm btn-secondary ml-2 my-3" href="'.url('/invoice/'.$row->id).'" role="button"><i class="fa-solid fa-print"></i></a>';
                     $btn = $btn .  '<a class="btn btn-sm btn-primary ml-2 my-3" href="'.url('/deal-detail/'.$row->id).'" role="button"><i class="fa fa-eye"></i></a>';
-                    $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/deal-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+                    // $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/deal-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+
+
+                    $btn .= '<button class="btn btn-sm btn-danger ml-2 my-3 delete" data-id="' . $row->id . '" type="button"><i class="fa fa-trash"></i></button>';
+
                     return $btn;
                 })
                 ->addColumn('balance', function ($row) {
@@ -142,10 +162,17 @@ class SaleController extends Controller
 
                     $created_at = $row->created_at;
 
-                    $formatted_date = Carbon::parse($created_at)->format('Y-m-d H:i:s');
+                    $formatted_date = Carbon::parse($created_at)->format('d-m-Y');
                     return $formatted_date;
                 })
-                ->rawColumns(['action', 'created'])
+                ->addColumn('date', function ($row) {
+
+                    $date = $row->date;
+
+                    $formatted_date = Carbon::parse($date)->format('d-m-Y');
+                    return $formatted_date;
+                })
+                ->rawColumns(['action', 'created','date'])
                 ->make(true);
 
         }
@@ -160,7 +187,7 @@ class SaleController extends Controller
 
         $customers = Customer::all();
 
-        $dealsData = json_decode($deal->deals_json, true);
+         $dealsData = is_string($deal->deals_json) ? json_decode($deal->deals_json, true) : $deal->deals_json;
 
 
         return view('admin.deal.edit', compact('deal', 'customers', 'dealsData'));
@@ -304,7 +331,7 @@ class SaleController extends Controller
 
                     $created_at = $row->created_at;
 
-                    $formatted_date = Carbon::parse($created_at)->format('Y-m-d H:i:s');
+                    $formatted_date = Carbon::parse($created_at)->format('Y-m-d');
                     return $formatted_date;
                 })
                 ->rawColumns(['action', 'created'])

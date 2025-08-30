@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
 
     //================ customer
 
+
     Route::get('/customer', [CustomerController::class, 'index'])->name('customer');
 
     Route::get('/customers-list', [CustomerController::class, 'getCustomers'])->name('customer.list');
@@ -88,6 +89,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/deal-list', [SaleController::class, 'list'])->name('deals.list');
 
+    Route::get('/get-customer/{id}', [SaleController::class, 'getCustomer'])->name('invoice.getCustomer');
 
     // edit deal
     Route::get('/edit-deal/{id}',  [SaleController::class, 'editDeal'])->name('Deal.edit');
@@ -126,6 +128,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/client', [ClientController::class, 'index'])->name('client');
 
+
+    Route::get('/clients-export', [ClientController::class, 'exportExcel'])->name('clients.export');
+
+
     Route::get('/clients-list', [ClientController::class, 'getClients'])->name('client.list');
 
     // add client
@@ -153,13 +159,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/edit-ledger/{id}', [ClientController::class, 'editLedger'])->name('ledger.edit');
 
+
     // trans update
 
     Route::post('/update-ledgers', [ClientController::class, 'updateLedger'])->name('ledger.update');
 
+    // Ledger delete
+    Route::get('/ledger-delete/{id}',[ClientController::class, 'deleteLedger'])->name('ledger.delete');
 
 
     Route::get('/ledger-report/{id}', [ClientController::class, 'ledgerReport'])->name('ledger.report');
+
+
 
 
 

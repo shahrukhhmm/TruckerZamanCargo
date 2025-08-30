@@ -13,13 +13,10 @@
                             <h4>Add  </h4>
 
                             <!-- Inventory Form -->
-                            <form action="{{ route('ledger.store') }}" method="POST">
+                           <form action="{{ route('ledger.store') }}" method="POST" id="ledger-form">
                                 @csrf
 
-                                <input type="hidden" value="{{@$client->id}}"
-                                id="client_id"
-                                name="client_id" class="form-control" >
-
+                                <input type="hidden" value="{{@$client->id}}" id="client_id" name="client_id" class="form-control">
 
                                 <div class="form-group">
                                     <label for="container_number">Amount</label>
@@ -32,23 +29,20 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="item_number">Detail</label>
-                                    <input type="detail" name="detail" class="form-control" required>
+                                    <input type="text" name="detail" class="form-control" required> <!-- Changed type to "text" as "detail" is invalid -->
                                 </div>
 
                                 <div class="form-group">
                                     <label for="item_number">Status</label>
-                                    <select name="status" id="status" class="form-control">
+                                    <select name="status" id="status" class="form-control" required>
                                         <option value="" selected disabled>Select status</option>
-
                                         <option value="Paid">Paid</option>
                                         <option value="Used">Received</option>
-
                                     </select>
                                 </div>
 
                                 <div class="d-flex justify-content-center">
-
-                                    <button type="submit" class="btn btn-primary">Create</button>
+                                    <button type="submit" class="btn btn-primary" id="create-button">Create</button>
                                 </div>
                             </form>
                         </div>
@@ -168,20 +162,13 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.client_id = $('#client_id').val();
-
                     }
                 },
-
                 columns: [
                     {
                         data: 'id',
                         name: 'id'
                     },
-
-                    // {
-                    //     data: 'deal.item_name',
-                    //     name: 'deal.item_name'
-                    // },
                     {
                         data: 'amount',
                         name: 'amount'
@@ -204,12 +191,31 @@
                 ],
             });
 
+            // Filter form submission
             $('#filter-form').on('submit', function(e) {
                 e.preventDefault();
                 $('.trans-listing').DataTable().ajax.reload();
             });
 
+            // Handle delete button click with confirmation
+            $('.trans-listing').on('click', '.btn-danger', function(e) {
+                e.preventDefault();
+
+                var deleteUrl = $(this).attr('href'); // Get the delete URL from the button
+                if (confirm('Are you sure you want to delete this record?')) {
+                    // Proceed with deletion
+                    window.location.href = deleteUrl;
+                }
+            });
+
         }, 2000);
     });
-</script>
 
+    // Form submission for create button
+    $(document).ready(function() {
+        $('#ledger-form').on('submit', function(e) {
+            var $button = $('#create-button');
+            $button.text('Creating').prop('disabled', true);
+        });
+    });
+</script>

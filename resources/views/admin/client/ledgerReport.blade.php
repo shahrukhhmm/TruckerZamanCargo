@@ -167,11 +167,11 @@
 
 
 
-        <p class="ft13 arabic-text bold" style=" position: absolute; top:205px;right:30px;">Total Received : {{@$totalUsed}}</p>
+        <p class="ft13 arabic-text bold" style=" position: absolute; top:205px;right:30px;">Total receivable : {{@$totalUsed}}</p>
 
         <p class="ft13 arabic-text bold" style=" position: absolute; top:205px;left:40%;">Balance : {{@$balance}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute; top:205px;left:30px;">Total Paid : {{@$totalPaid}}</p>
+        <p class="ft13 arabic-text bold" style=" position: absolute; top:205px;left:30px;">Total payable : {{@$totalPaid}}</p>
 
 
         <div style="position: absolute; top:190px; left: 0px;right: 0; border-bottom: 2px solid rgb(0, 0, 0);">
@@ -204,79 +204,41 @@
 
 
             @php
-            $runningBalance= 0 ;
-        @endphp
+                $runningBalance= 0 ;
+            @endphp
 
-        @foreach ($ledger as $t)
-            <tr>
-                <td>{{ @$t->date }}</td>
-                <td>{{ @$t->detail }}</td>
+            @foreach ($ledger as $t)
+                <tr>
+                    <td>{{ @$t->date }}</td>
+                    <td>{{ @$t->detail }}</td>
 
-                @if ($t->status == 'Used')
-                    <td style="background-color: rgba(147, 225, 147, 0.6); font-weight: bold;">
-                        {{ @$t->amount }}
-                    </td>
-                    <td style="background-color: rgba(255, 158, 158, 0.6); font-weight: bold;">
-                    </td>
-                    @php
-                        $runningBalance -= $t->amount;
-                    @endphp
-                @else
-                    <td style="background-color: rgba(147, 225, 147, 0.6); font-weight: bold;">
-                    </td>
-                    <td style="background-color: rgba(255, 158, 158, 0.6); font-weight: bold;">
-                        {{ @$t->amount }}
-                    </td>
-                    @php
-                        $runningBalance += $t->amount;
-                    @endphp
-                @endif
+                    @if ($t->status == 'Used')
+                        <td style="background-color: rgba(147, 225, 147, 0.6); font-weight: bold;">
+                            {{ @$t->amount }}
+                        </td>
+                        <td style="background-color: rgba(255, 158, 158, 0.6); font-weight: bold;">
+                        </td>
+                        @php
+                            $runningBalance -= $t->amount;
+                        @endphp
+                    @else
+                        <td style="background-color: rgba(147, 225, 147, 0.6); font-weight: bold;">
+                        </td>
+                        <td style="background-color: rgba(255, 158, 158, 0.6); font-weight: bold;">
+                            {{ @$t->amount }}
+                        </td>
+                        @php
+                            $runningBalance += $t->amount;
+                        @endphp
+                    @endif
 
-                <td>{{ $runningBalance }}</td>
-            </tr>
-        @endforeach
-
-{{--
-            <tr>
-                <th colspan="3">
-                    Total Balance
-                </th>
-
-                <th>
-                    {{@$balance}}
-                </th>
-
-            </tr> --}}
+                    <td>{{ $runningBalance }}</td>
+                </tr>
+            @endforeach
 
         </table>
 
 
-
-
-        {{-- <div style="position: absolute; bottom: 85px; left: 0px;right: 0; border-bottom: 2px solid rgb(178, 178, 178);">
-
-            <!-- <hr> -->
-        </div> --}}
-
-{{--
-        <div style="position: absolute; bottom:3px;left:10px; width:75px">
-            <img src="{{asset('/images/logo/whataspp qr zaman cargo.png')}}" alt="Not Found" width="100%">
-        </div>
-
-
-
-
-        <p class="ft15" style="position: absolute; bottom:40px;right: 25%;">
-            فورتھ فلور  پنڈی کاروان پلازہ اکبری مارکیٹ گنج منڈی راولپنڈی
-        </p>
-        <p class="ft15" style="position: absolute; bottom:20px;right: 15%;">
-            4th floor, pindi karwan plaza, Akbari Market , Ganjmandi Rawalpindi.
-        </p>
-
-
-        <div style="position: absolute; bottom:3px;right:10px;width:75px">
-            <img src="{{asset('/images/logo/wechat qr zaman cargo.png')}}" alt="Not Found" width="100%">
-        </div> --}}
     </div>
 
 </body>

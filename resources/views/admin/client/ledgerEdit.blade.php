@@ -40,7 +40,7 @@
                                         <option value="" selected disabled>Select status</option>
 
                                         <option value="Paid" {{ $ledger->status == "Paid" ? 'selected' : '' }}> Paid</option>
-                                        <option value="Used" {{ $ledger->status == "Used" ? 'selected' : '' }}>Used</option>
+                                        <option value="Used" {{ $ledger->status == "Used" ? 'selected' : '' }}>Received</option>
 
                                     </select>
                                 </div>

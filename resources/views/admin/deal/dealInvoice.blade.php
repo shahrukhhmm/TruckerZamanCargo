@@ -161,26 +161,23 @@
 
             <!-- <hr> -->
         </div>
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:137px; left:30px;">Customer Name: {{@$deal->customer->name}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:137px;left:30px;">Customer Name : {{@$deal->customer->name}}</p>
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:155px; left:30px;">Customer Contact: {{@$deal->customer->contact}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:155px;left:30px;">Customer Contact : {{@$deal->customer->contact}}</p>
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:175px; left:30px;">Shipping Mark: {{@$deal->shipping_mark}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:175px;left:30px;">Shipping mark : {{@$deal->shipping_mark}}</p>
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:193px;left:30px;">Date of Loading: {{@$deal->date_of_loading}}</p>
-
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:193px; left:30px;">Date of Loading: {{@$deal->date_of_loading ? \Carbon\Carbon::parse($deal->date_of_loading)->format('d-m-Y') : ''}}</p>
 
         {{-- right --}}
 
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:137px; right:30px;">Date: {{@$deal->date ? \Carbon\Carbon::parse($deal->date)->format('d-m-Y') : ''}}</p>
 
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:155px; right:30px;">Container Number: {{@$deal->container_number}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:137px;right:30px;">Date : {{@$deal->date}}</p>
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:175px; right:30px;">Place: {{@$deal->customer->location}}</p>
 
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:155px;right:30px;">Container Number : {{@$deal->container_number}}</p>
-
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:175px;right:30px;">Place: {{@$deal->customer->location}}</p>
-        <p class="ft13 arabic-text bold" style=" position: absolute;font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:193px;right:30px;">Date of shipping: {{@$deal->date_of_shipping}}</p>
-
+        <p class="ft13 arabic-text bold" style="position: absolute; font-size:18px; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; top:193px; right:30px;">Date of Shipping: {{@$deal->date_of_shipping ? \Carbon\Carbon::parse($deal->date_of_shipping)->format('d-m-Y') : ''}}</p>
 
 
         <table class="ft13" style="position: absolute; top:218px;right: 30px; left: 30px; border: 2px solid black; width: 94%;" border="2px solid black">

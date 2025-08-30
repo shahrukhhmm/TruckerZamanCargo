@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Admin;
 use Carbon\Carbon;
 use App\Models\Deal;
 use App\Models\Client;
+use App\Models\Customer;
 use App\Models\LedgerReport;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection;
 
 class ClientController extends Controller
 {
@@ -19,6 +23,20 @@ class ClientController extends Controller
         return view('admin.client.index',compact('clients'));
     }
 
+    public function exportExcel()
+    {
+        return Excel::download(new class implements FromCollection, WithHeadings {
+            public function collection()
+            {
+                return Client::select('id','name','contact','reference','created_at')->get();
+            }
+
+            public function headings(): array
+            {
+                return ['ID','Name','Contact','Reference','Created Date'];
+            }
+        }, 'Clients.xlsx');
+    }
 
     // yajra pagination
     public function getClients(Request $request)
@@ -45,7 +63,9 @@ class ClientController extends Controller
                 ->addColumn('action', function ($row) {
 
                     $btn = '<button class="btn btn-sm  btn-info ml-2 my-3 edit" value="' . $row->id . '" type="button"><i class="fa fa-edit"></i></button>';
-                    $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/client-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+                    // $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/client-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+                    $btn .= '<button class="btn btn-sm btn-danger ml-2 my-3 delete" data-id="' . $row->id . '" type="button"><i class="fa fa-trash"></i></button>';
+
                     $btn = $btn .  '<a class="btn btn-sm btn-dark ml-2 my-3" href="'.url('/client-detail/'.$row->id).'" role="button"><i class="fa fa-eye"></i></a>';
 
                     $btn = $btn .  '<a class="btn btn-sm btn-secondary ml-2 my-3" href="'.url('/ledger-report/'.$row->id).'" role="button"><i class="fa-solid fa-print"></i></a>';
@@ -132,7 +152,7 @@ class ClientController extends Controller
     }
 
 
-    //  ==========================legdger
+    //  ==========================ledger
 
 
 
@@ -187,7 +207,7 @@ class ClientController extends Controller
 
                     $btn =   '<a class="btn btn-sm  btn-info btn-info ml-2 my-3" href="'.url('/edit-ledger/'.$row->id).'" role="button"><i class="fa fa-edit"></i></a>';
 
-                    // $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/trans-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+                    $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/ledger-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
                     return $btn;
                 })
                 ->addColumn('amount', function ($row) {
@@ -241,6 +261,7 @@ class ClientController extends Controller
     // update Ledger
     public function updateLedger(Request $req){
 
+        // dd($req->all())
 
         $ledger = LedgerReport::where('id',$req->ledger_Id)->first();
 
@@ -255,16 +276,28 @@ class ClientController extends Controller
 
     }
 
+    // delete Ledger
+    public function deleteLedger($id){
+        $ledger = LedgerReport::find($id);
+
+        if ($ledger) {
+            $ledger->delete();
+            session()->flash('message', 'Ledger report deleted successfully!');
+        } else {
+            session()->flash('message', 'Ledger report not found!');
+        }
+
+        return redirect()->back();
+    }
+
 
 
     public function ledgerReport($id)
     {
         $ledger = LedgerReport::with('client')->where('client_id', $id)->get();
 
-        // Get the client information
         $client = Client::find($id);
 
-        // Calculate total credit amount
         $totalUsed = LedgerReport::where('client_id', $id)->where('status', 'Used')->sum('amount');
 
         $totalPaid = LedgerReport::where('client_id', $id)->where('status', 'Paid')->sum('amount');

@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
+use App\Models\Deal;
 use App\Models\User;
 use App\Models\Branch;
 use App\Models\Customer;
+use App\Models\Transection;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\Deal;
-use App\Models\Transection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection;
 
 class CustomerController extends Controller
 {
@@ -22,6 +25,10 @@ class CustomerController extends Controller
         $customers = Customer::count();
         return view('admin.customer.index',compact('customers'));
     }
+
+
+
+
 
 
     // yajra pagination
@@ -46,9 +53,8 @@ class CustomerController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('action', function ($row) {
-
-                    $btn = '<button class="btn btn-sm  btn-info ml-2 my-3 edit" value="' . $row->id . '" type="button"><i class="fa fa-edit"></i></button>';
-                    $btn = $btn .  '<a class="btn btn-sm btn-danger ml-2 my-3" href="'.url('/customer-delete/'.$row->id).'" role="button"><i class="fa fa-trash"></i></a>';
+                    $btn = '<button class="btn btn-sm btn-info ml-2 my-3 edit" value="' . $row->id . '" type="button"><i class="fa fa-edit"></i></button>';
+                    $btn .= '<button class="btn btn-sm btn-danger ml-2 my-3 delete" data-id="' . $row->id . '" type="button"><i class="fa fa-trash"></i></button>';
                     return $btn;
                 })
                 ->addColumn('created', function ($row) {

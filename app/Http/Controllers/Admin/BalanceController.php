@@ -59,6 +59,17 @@ class BalanceController extends Controller
 
                     return $amount;
                 })
+                ->addColumn('status', function ($row) {
+
+                    if($row->status  == 'Used'){
+                        $status = 'Received';
+                    }else{
+                        $status =  $row->status;
+
+                    }
+
+                    return $status;
+                })
                 ->rawColumns([ 'created','amount'])
                 ->make(true);
 

@@ -20,6 +20,8 @@
                         <span class="float-right display-5 opacity-5"><i class="fa fa-users"></i></span>
                     </div>
                 </div>
+
+                <a href="{{ route('clients.export') }}" class="btn btn-success">Download Excel</a>
             </div>
 
         </div>
@@ -32,6 +34,8 @@
                         <div  class="col-md-12" style="background:white;  display: flex;  flex-wrap: wrap; flex-direction: row; justify-content: space-between;">
 
                             <p style="margin-top: 14px;"><i class="fa fa-user"></i>  <button class="btn btn-sm  btn-info ml-2 my-3 add" type="button">Add Client</button></p>
+
+
 
 
                             <form id="filter-form" style="display:flex; align-items:center;  flex-wrap: nowrap; justify-content: space-between; margin-bottom: 0px;">
@@ -291,8 +295,11 @@
             contentType: false,
             processData: false,
             success: function(response) {
-                $('#sending-message').text(response.success);
-                // Reload the DataTable or update the UI as necessary
+               Swal.fire(
+                    'Added!',
+                    'The client has been Added.',
+                    'success'
+                );
                 $('.client-listing').DataTable().ajax.reload();
             },
             error: function(xhr) {
@@ -372,11 +379,23 @@
                     'reference': reference,
 
                 },
-                success: function(response) {},
+                success: function(response) {
+
+                    Swal.fire(
+                        'Update!',
+                        'The client has been Updated.',
+                        'success'
+                    );
+                    $('.client-listing').DataTable().ajax.reload();
+                },
 
                 error: function(xhr) {
-
-                    $('#update-message').text(xhr);
+                    Swal.fire(
+                        'Error!',
+                        'The client has not been Updated.',
+                        'success'
+                    );
+                    // $('#update-message').text(xhr);
                 },
                 complete: function() {
                     $('#update-message').text('');
@@ -386,6 +405,53 @@
                 }
             });
 
+        });
+    });
+</script>
+
+
+
+
+{{-- delete pop up  --}}
+<script>
+    $(document).ready(function() {
+        $(document).on('click', '.delete', function() {
+            var clientId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ url('/client-delete') }}/" + clientId,
+                        type: "GET",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The Client has been deleted.',
+                                'success'
+                            );
+                            $('.client-listing').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the client.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

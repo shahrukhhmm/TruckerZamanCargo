@@ -153,8 +153,8 @@
             <tr>
                 <th> Name</th>
                 <th> Contact</th>
-                <th>Total Used</th>
                 <th>Total Paid</th>
+                <th>Total Received</th>
                 <th>Balance</th>
 
             </tr>
@@ -174,10 +174,10 @@
                     </td>
 
                     <td>
-                        - {{@$t['total_used']}}
+                        {{@$t['total_paid']}}
                     </td>
                     <td>
-                        {{@$t['total_paid']}}
+                        - {{@$t['total_used']}}
                     </td>
                     <td>
                         {{@$t['balance']}}
